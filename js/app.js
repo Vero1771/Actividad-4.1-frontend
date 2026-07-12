@@ -5,10 +5,72 @@
     const searchBtn = document.getElementById('searchBtn');
     const resultContainer = document.getElementById('resultContainer');
     const tabs = document.querySelectorAll('.tab');
+    const themeToggle = document.getElementById('themeToggle');
+    const fontSelect = document.getElementById('fontSelect');
+    
     let currentTab = 'definiciones';
     let currentData = null;
     let currentWord = '';
+    let currentTheme = 'auto';
 
+    // === TEMA ===
+    function applyTheme(theme) {
+        currentTheme = theme;
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            themeToggle.textContent = '🌙 Oscuro';
+        } else if (theme === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+            themeToggle.textContent = '☀️ Claro';
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            themeToggle.textContent = '🌓 Auto';
+        }
+        localStorage.setItem('dictionary-theme', theme);
+    }
+
+    function toggleTheme() {
+        if (currentTheme === 'auto') applyTheme('light');
+        else if (currentTheme === 'light') applyTheme('dark');
+        else applyTheme('auto');
+    }
+
+    function loadTheme() {
+        var saved = localStorage.getItem('dictionary-theme');
+        if (saved && (saved === 'light' || saved === 'dark' || saved === 'auto')) {
+            applyTheme(saved);
+        } else {
+            applyTheme('auto');
+        }
+    }
+
+    // === FUENTE ===
+    function applyFont(fontClass) {
+        document.body.className = document.body.className
+            .split(' ')
+            .filter(function(cls) {
+                return !cls.startsWith('font-');
+            })
+            .join(' ');
+        
+        if (fontClass && fontClass !== 'font-1') {
+            document.body.classList.add(fontClass);
+        }
+        localStorage.setItem('dictionary-font', fontClass);
+    }
+
+    function loadFont() {
+        var saved = localStorage.getItem('dictionary-font');
+        if (saved) {
+            fontSelect.value = saved;
+            applyFont(saved);
+        } else {
+            fontSelect.value = 'font-1';
+            applyFont('font-1');
+        }
+    }
+
+    // === RENDER ===
     function showLoading() {
         resultContainer.innerHTML = '<p>Cargando...</p>';
     }
@@ -60,7 +122,6 @@
         
         resultContainer.innerHTML = html;
 
-        // Evento para botones de audio
         document.querySelectorAll('.audio-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var audio = new Audio(this.dataset.audio);
@@ -143,6 +204,7 @@
         }
     }
 
+    // === API ===
     function fetchWord(word) {
         if (!word || word.trim() === '') {
             showEmptyState();
@@ -177,7 +239,18 @@
         fetchWord(word);
     }
 
-    // Evento de búsqueda
+    // === INICIALIZACIÓN ===
+    // Tema
+    loadTheme();
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Fuente
+    loadFont();
+    fontSelect.addEventListener('change', function() {
+        applyFont(this.value);
+    });
+
+    // Búsqueda
     searchBtn.addEventListener('click', handleSearch);
     searchInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') {
@@ -185,7 +258,7 @@
         }
     });
 
-    // Evento de pestañas
+    // Pestañas
     tabs.forEach(function(tab) {
         tab.addEventListener('click', function() {
             tabs.forEach(function(t) { t.classList.remove('active'); });

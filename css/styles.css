@@ -4,20 +4,96 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --text: #1a2332;
+    --text-secondary: #4a5a72;
+    --border: #e2e8f0;
+    --accent: #6c5ce7;
+    --accent-hover: #5a4bd1;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1);
+    --header-bg: #6c5ce7;
+    --footer-bg: #eee;
+}
+
+[data-theme="dark"] {
+    --bg: #0f1420;
+    --surface: #1a2332;
+    --text: #e8edf5;
+    --text-secondary: #9aabbf;
+    --border: #2a3348;
+    --accent: #8b7cf7;
+    --accent-hover: #a29bfe;
+    --shadow: 0 2px 10px rgba(0,0,0,0.3);
+    --header-bg: #2a2348;
+    --footer-bg: #0f1420;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background: #f5f5f5;
-    color: #333;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    transition: background 0.3s, color 0.3s;
 }
 
+body.font-2 { font-family: 'Georgia', 'Times New Roman', serif; }
+body.font-3 { font-family: 'Courier New', Courier, monospace; }
+
 header {
-    background: #6c5ce7;
-    color: white;
+    background: var(--header-bg);
     padding: 1rem 2rem;
-    text-align: center;
+    transition: background 0.3s;
+}
+
+.header-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+header h1 {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.header-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.header-controls button,
+.header-controls select {
+    padding: 0.3rem 0.8rem;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.header-controls select {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.3rem 0.5rem;
+}
+
+.header-controls select option {
+    background: var(--surface);
+    color: var(--text);
+}
+
+.header-controls button:hover {
+    background: rgba(255,255,255,0.3);
 }
 
 main {
@@ -37,44 +113,50 @@ section {
 input {
     flex: 1;
     padding: 0.8rem;
-    border: 2px solid #ddd;
+    border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 1rem;
+    background: var(--surface);
+    color: var(--text);
+    transition: border-color 0.3s, background 0.3s;
 }
 
 input:focus {
     outline: none;
-    border-color: #6c5ce7;
+    border-color: var(--accent);
 }
 
 #searchBtn {
     padding: 0.8rem 1.5rem;
-    background: #6c5ce7;
+    background: var(--accent);
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;
+    transition: background 0.3s;
 }
 
 #searchBtn:hover {
-    background: #5a4bd1;
+    background: var(--accent-hover);
 }
 
 nav {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
 }
 
 nav .tab {
     padding: 0.5rem 1.2rem;
-    background: #e8e8e8;
-    color: #555;
+    background: var(--border);
+    color: var(--text-secondary);
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 0.9rem;
+    transition: all 0.3s;
 }
 
 nav .tab:hover {
@@ -82,25 +164,26 @@ nav .tab:hover {
 }
 
 nav .tab.active {
-    background: #6c5ce7;
+    background: var(--accent);
     color: white;
 }
 
 #resultContainer {
-    background: white;
+    background: var(--surface);
     border-radius: 8px;
     padding: 1.5rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow);
     min-height: 150px;
+    transition: all 0.3s;
 }
 
 #resultContainer h2 {
-    color: #6c5ce7;
+    color: var(--accent);
     margin-bottom: 0.5rem;
 }
 
 #resultContainer h3 {
-    color: #555;
+    color: var(--text-secondary);
     margin: 1rem 0 0.5rem 0;
     text-transform: capitalize;
 }
@@ -115,14 +198,14 @@ nav .tab.active {
 }
 
 #resultContainer .example {
-    color: #888;
+    color: var(--text-secondary);
     font-style: italic;
     display: block;
     padding-left: 1.5rem;
 }
 
 .audio-btn {
-    background: #6c5ce7;
+    background: var(--accent);
     color: white;
     border: none;
     border-radius: 50%;
@@ -130,17 +213,20 @@ nav .tab.active {
     height: 30px;
     cursor: pointer;
     font-size: 0.8rem;
+    transition: background 0.3s;
 }
 
 .audio-btn:hover {
-    background: #5a4bd1;
+    background: var(--accent-hover);
 }
 
 footer {
-    background: #eee;
+    background: var(--footer-bg);
     padding: 1rem;
     text-align: center;
     margin-top: auto;
+    transition: background 0.3s;
+    border-top: 1px solid var(--border);
 }
 
 @media (max-width: 600px) {
@@ -148,13 +234,14 @@ footer {
         flex-direction: column;
     }
     
-    nav {
-        flex-wrap: wrap;
-    }
-    
     nav .tab {
         flex: 1;
         min-width: 80px;
+        text-align: center;
+    }
+    
+    .header-content {
+        flex-direction: column;
         text-align: center;
     }
 }
