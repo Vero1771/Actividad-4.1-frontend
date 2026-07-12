@@ -47,7 +47,7 @@ input:focus {
     border-color: #6c5ce7;
 }
 
-button {
+#searchBtn {
     padding: 0.8rem 1.5rem;
     background: #6c5ce7;
     color: white;
@@ -57,7 +57,7 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+#searchBtn:hover {
     background: #5a4bd1;
 }
 
@@ -114,9 +114,47 @@ nav .tab.active {
     line-height: 1.5;
 }
 
+#resultContainer .example {
+    color: #888;
+    font-style: italic;
+    display: block;
+    padding-left: 1.5rem;
+}
+
+.audio-btn {
+    background: #6c5ce7;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+.audio-btn:hover {
+    background: #5a4bd1;
+}
+
 footer {
     background: #eee;
     padding: 1rem;
     text-align: center;
     margin-top: auto;
+}
+
+@media (max-width: 600px) {
+    section {
+        flex-direction: column;
+    }
+    
+    nav {
+        flex-wrap: wrap;
+    }
+    
+    nav .tab {
+        flex: 1;
+        min-width: 80px;
+        text-align: center;
+    }
 }

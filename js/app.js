@@ -21,24 +21,54 @@
         resultContainer.innerHTML = '<p>Escribe una palabra para buscar su definición</p>';
     }
 
+    function getAudioUrl(phonetics) {
+        if (!phonetics || !Array.isArray(phonetics)) return null;
+        for (var i = 0; i < phonetics.length; i++) {
+            if (phonetics[i].audio) {
+                return phonetics[i].audio;
+            }
+        }
+        return null;
+    }
+
     function renderDefinitions(entry) {
         const meanings = entry.meanings || [];
+        const audioUrl = getAudioUrl(entry.phonetics);
+        
         let html = '<h2>' + currentWord + '</h2>';
         
         if (entry.phonetic) {
-            html += '<p>Pronunciación: ' + entry.phonetic + '</p>';
+            html += '<p>Pronunciación: ' + entry.phonetic;
+            if (audioUrl) {
+                html += ' <button class="audio-btn" data-audio="' + audioUrl + '">🔊</button>';
+            }
+            html += '</p>';
         }
         
         meanings.forEach(function(m) {
             html += '<h3>' + (m.partOfSpeech || '') + '</h3>';
             html += '<ul>';
             (m.definitions || []).forEach(function(d) {
-                html += '<li>' + d.definition + '</li>';
+                html += '<li>' + d.definition;
+                if (d.example) {
+                    html += ' <span class="example">— "' + d.example + '"</span>';
+                }
+                html += '</li>';
             });
             html += '</ul>';
         });
         
         resultContainer.innerHTML = html;
+
+        // Evento para botones de audio
+        document.querySelectorAll('.audio-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var audio = new Audio(this.dataset.audio);
+                audio.play().catch(function(err) {
+                    console.warn('Error al reproducir audio:', err);
+                });
+            });
+        });
     }
 
     function renderSynonyms(entry) {
@@ -66,6 +96,36 @@
         resultContainer.innerHTML = html;
     }
 
+    function renderExamples(entry) {
+        const meanings = entry.meanings || [];
+        let allExamples = [];
+        
+        meanings.forEach(function(m) {
+            (m.definitions || []).forEach(function(d) {
+                if (d.example) {
+                    allExamples.push({
+                        example: d.example,
+                        partOfSpeech: m.partOfSpeech || 'noun'
+                    });
+                }
+            });
+        });
+
+        let html = '<h2>Ejemplos de "' + currentWord + '"</h2>';
+        
+        if (allExamples.length === 0) {
+            html += '<p>No se encontraron ejemplos</p>';
+        } else {
+            html += '<ul>';
+            allExamples.forEach(function(e) {
+                html += '<li><strong>' + e.partOfSpeech + ':</strong> "' + e.example + '"</li>';
+            });
+            html += '</ul>';
+        }
+        
+        resultContainer.innerHTML = html;
+    }
+
     function renderContent() {
         if (!currentData || !currentWord) {
             showEmptyState();
@@ -78,6 +138,8 @@
             renderDefinitions(entry);
         } else if (currentTab === 'sinonimos') {
             renderSynonyms(entry);
+        } else if (currentTab === 'ejemplos') {
+            renderExamples(entry);
         }
     }
 
@@ -89,6 +151,7 @@
 
         const trimmed = word.trim().toLowerCase();
         currentWord = trimmed;
+        localStorage.setItem('last-word', trimmed);
         showLoading();
 
         const url = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(trimmed);
@@ -131,5 +194,14 @@
             renderContent();
         });
     });
+
+    // Cargar última palabra
+    var savedWord = localStorage.getItem('last-word');
+    if (savedWord) {
+        searchInput.value = savedWord;
+        setTimeout(function() {
+            handleSearch();
+        }, 300);
+    }
 
 })();
